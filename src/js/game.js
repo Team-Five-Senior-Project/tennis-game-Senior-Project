@@ -6,8 +6,8 @@ var scene = new Phaser.Scene('game');
 var config = {
   type: Phaser.AUTO,
   scale: {
-    width: window.innerWidth * window.devicePixelRatio,
-    height: window.innerHeight * window.devicePixelRatio,
+    width: 1920,
+    height: 1080,
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
