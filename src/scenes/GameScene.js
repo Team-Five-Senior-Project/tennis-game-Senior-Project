@@ -10,7 +10,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(960, 540, 'ground');
+        this.ground = this.add.image(960, 540, 'ground');
     }
 
     update() {
