@@ -36,11 +36,17 @@ npm install
 The project's dependencies will be installed, including Phaser and the HTTP server to run the project in a browser. To build the project using the source files, run:
 
 ```
-npm run build
+npm run dev
 ```
 
-To run the web server, run:
+To check for syntax errors, run:
 
 ```
-npm run serve
+npm run test
+```
+
+To build for deployment, run:
+
+```
+npm run deploy
 ```
