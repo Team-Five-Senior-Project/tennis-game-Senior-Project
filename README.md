@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/391cd143-e6ff-4fbc-be29-89cee61b5467/deploy-status)](https://app.netlify.com/sites/tennis-game-senior-project/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/391cd143-e6ff-4fbc-be29-89cee61b5467/deploy-status)](https://tennis-game-senior-project.netlify.app/)
 
 # Tennis Game
 
