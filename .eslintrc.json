@@ -34,7 +34,7 @@
       "allowSingleLine": true
     }],
     "camelcase": "error",
-    "comma-dangle": ["error", "never"],
+    "comma-dangle": ["error", "always-multiline"],
     "comma-style": ["error", "last"],
     "computed-property-spacing": ["error", "never"],
     "consistent-this": ["error", "_this"],
