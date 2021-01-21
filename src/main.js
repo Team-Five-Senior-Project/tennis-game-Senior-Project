@@ -1,15 +1,33 @@
 import 'phaser';
+import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
-import Clouds from './scenes/Clouds';
+import PauseScene from './scenes/PauseScene';
+import SliderPlugin from 'phaser3-rex-plugins/plugins/slider-plugin.js';
 
 const config = {
     type: Phaser.AUTO,
     width: 1920,
     height: 1080,
-    physics: {
-        default: 'arcade'
+    input: {
+        activePointers: 3,
     },
-    scene: [GameScene, Clouds]
+    plugins: {
+        global: [
+            {
+                key: 'rexSlider',
+                plugin: SliderPlugin,
+                start: true,
+            },
+        ],
+    },
+    physics: {
+        default: 'arcade',
+    },
+    scene: [
+        TitleScene,
+        GameScene,
+        PauseScene,
+    ],
 };
 
 const game = new Phaser.Game(config); // eslint-disable-line no-unused-vars
