@@ -28,15 +28,17 @@ class GameScene extends Phaser.Scene {
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         if (this.hasPlayer2) {
-            this.keyW=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-            this.keyS=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+            this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+            this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         }
 
         // pause button
         let pauseText = this.add.text(this.cameras.main.centerX, 50, 'Pause');
         pauseText.setOrigin(0.5);
         pauseText.setScale(5);
-        pauseText.setInteractive({ useHandCursor: true });
+        pauseText.setInteractive({
+            useHandCursor: true,
+        });
         pauseText.on('pointerdown', () => {
             this.scene.launch('PauseScene');
             this.scene.pause();
@@ -86,7 +88,6 @@ class GameScene extends Phaser.Scene {
     }
 
     update() {
-
         // player 1 keyboard controls (⬆, ⬇)
         if (this.cursorKeys.up.isDown) {
             this.player1.setVelocityY(-250);
@@ -106,8 +107,6 @@ class GameScene extends Phaser.Scene {
                 this.player2.setVelocityY(0);
             }
         }
-
-        
     }
 }
 

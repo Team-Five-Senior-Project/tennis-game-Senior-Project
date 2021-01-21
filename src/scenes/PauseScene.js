@@ -13,7 +13,9 @@ class PauseScene extends Phaser.Scene {
         let resumeText = this.add.text(this.cameras.main.centerX, 50, 'Resume');
         resumeText.setOrigin(0.5);
         resumeText.setScale(5);
-        resumeText.setInteractive({ useHandCursor: true });
+        resumeText.setInteractive({
+            useHandCursor: true,
+        });
         resumeText.on('pointerdown', () => {
             this.scene.resume('GameScene');
             this.scene.stop();

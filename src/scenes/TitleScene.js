@@ -20,17 +20,25 @@ class TitleScene extends Phaser.Scene {
         let onePlayerText = this.add.text(this.cameras.main.centerX - 300, this.cameras.main.centerY + 50, 'One Player');
         onePlayerText.setOrigin(0.5);
         onePlayerText.setScale(4);
-        onePlayerText.setInteractive({ useHandCursor: true });
+        onePlayerText.setInteractive({
+            useHandCursor: true,
+        });
         onePlayerText.on('pointerdown', () => {
-            this.scene.start('GameScene', { hasPlayer2: false });
+            this.scene.start('GameScene', {
+                hasPlayer2: false,
+            });
         });
 
         let twoPlayerText = this.add.text(this.cameras.main.centerX + 300, this.cameras.main.centerY + 50, 'Two Players');
         twoPlayerText.setOrigin(0.5);
         twoPlayerText.setScale(4);
-        twoPlayerText.setInteractive({ useHandCursor: true });
+        twoPlayerText.setInteractive({
+            useHandCursor: true,
+        });
         twoPlayerText.on('pointerdown', () => {
-            this.scene.start('GameScene', { hasPlayer2: true });
+            this.scene.start('GameScene', {
+                hasPlayer2: true,
+            });
         });
     }
 
