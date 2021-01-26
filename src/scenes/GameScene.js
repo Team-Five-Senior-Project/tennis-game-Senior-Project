@@ -12,6 +12,7 @@ class GameScene extends Phaser.Scene {
     preload() {
         this.load.image('ground', 'assets/images/ground.png');
         this.load.image('player', 'assets/images/cloud-paddle.png');
+        this.load.image('ball', 'assets/images/ball.png');
     }
 
     create() {
@@ -24,7 +25,7 @@ class GameScene extends Phaser.Scene {
         });
 
         this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
-
+        
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         if (this.hasPlayer2) {
@@ -85,14 +86,62 @@ class GameScene extends Phaser.Scene {
         } else {
             // TODO: AI-controlled player ¯\_(ツ)_/¯
         }
+
+        // Ball oject
+        this.ball = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'ball');
+        this.ball.setScale(2);
+        this.ball.setCollideWorldBounds(true);
+        this.ball.setBounce(1);
+
+        // Ball movement
+        let moveVelocityX = 700;
+        let moveVelocityY = 100;
+        this.ball.setVelocityX(moveVelocityX);
+        this.ball.setVelocityY(moveVelocityY);
+
+        // Collider function player 1
+        this.hitTHePlayer1 = (ball, player1) => {
+            moveVelocityX = moveVelocityX + 10;
+            moveVelocityX = moveVelocityX * (-1);
+            console.log(moveVelocityX);
+
+            ball.setVelocityX(moveVelocityX);
+
+            if (moveVelocityY < 0) {
+                moveVelocityY = moveVelocityY * (-1);
+                ball.setVelocityY(moveVelocityY);
+            }
+            
+            player1.setVelocityX(-1);
+        };
+
+        // Collider function player 1
+        this.hitTHePlayer2 = (ball, player2) => {
+            moveVelocityX = moveVelocityX + 10;
+            moveVelocityX = moveVelocityX * (-1);
+            console.log(moveVelocityX);
+
+            ball.setVelocityX(moveVelocityX);
+
+            if (moveVelocityY < 0) {
+                moveVelocityY = moveVelocityY * (-1);
+                ball.setVelocityY(moveVelocityY);
+            }
+            
+            player2.setVelocityX(-1);
+        };
+        
+        // Add collider function
+        this.physics.add.collider(this.ball, this.player1, this.hitTHePlayer1);
+        this.physics.add.collider(this.ball, this.player2, this.hitTHePlayer2);
     }
 
     update() {
         // player 1 keyboard controls (⬆, ⬇)
         if (this.cursorKeys.up.isDown) {
-            this.player1.setVelocityY(-250);
+            this.player1.setVelocityY(-500);
         } else if (this.cursorKeys.down.isDown) {
-            this.player1.setVelocityY(250);
+            this.player1.setVelocityY(500);
         } else {
             this.player1.setVelocityY(0);
         }
@@ -100,9 +149,9 @@ class GameScene extends Phaser.Scene {
         // player 2 keyboard controls (W, S)
         if (this.hasPlayer2) {
             if (this.keyW.isDown) {
-                this.player2.setVelocityY(-250);
+                this.player2.setVelocityY(-500);
             } else if (this.keyS.isDown) {
-                this.player2.setVelocityY(250);
+                this.player2.setVelocityY(500);
             } else {
                 this.player2.setVelocityY(0);
             }
