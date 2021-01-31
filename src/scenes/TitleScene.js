@@ -7,13 +7,11 @@ class TitleScene extends Phaser.Scene {
 
     preload() {
         // TODO: replace the main screen background image
-        this.load.image('bg', 'build/assets/images/ground.png');
+        this.load.image('bg', 'assets/images/ground.png');
     }
 
     create() {
         this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
-
-
 
         let startText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Select Your Game');
         startText.setOrigin(0.5);
@@ -40,9 +38,8 @@ class TitleScene extends Phaser.Scene {
         twoPlayerText.on('pointerdown', () => {
             this.scene.start('GameScene', {
                 hasPlayer2: true,
-			
-});
-	});
+            });
+        });
     }
 
     update() {
