@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 class GameScene extends Phaser.Scene {
     constructor() {
         super({
@@ -94,41 +96,39 @@ class GameScene extends Phaser.Scene {
         this.ball.setBounce(1);
 
         // Ball movement
-        let moveVelocityX = 700;
+        let moveVelocityX = 800;
         let moveVelocityY = 100;
         this.ball.setVelocityX(moveVelocityX);
         this.ball.setVelocityY(moveVelocityY);
 
         // Collider function player 1
-        this.hitTHePlayer1 = (ball, player1) => {
+        this.hitTHePlayer1 = (ball) => {
             moveVelocityX = moveVelocityX + 10;
-            moveVelocityX = moveVelocityX * (-1);
-            console.log(moveVelocityX);
-
+            moveVelocityX = moveVelocityX * (-1); // Change direction after contatct 
             ball.setVelocityX(moveVelocityX);
-
+            
+            moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
             if (moveVelocityY < 0) {
-                moveVelocityY = moveVelocityY * (-1);
+                ball.setVelocityY(moveVelocityY);
+            } else {
+                moveVelocityY = moveVelocityY + 10;
                 ball.setVelocityY(moveVelocityY);
             }
-            
-            player1.setVelocityX(-1);
         };
 
         // Collider function player 1
-        this.hitTHePlayer2 = (ball, player2) => {
+        this.hitTHePlayer2 = (ball) => {
             moveVelocityX = moveVelocityX + 10;
-            moveVelocityX = moveVelocityX * (-1);
-            console.log(moveVelocityX);
-
+            moveVelocityX = moveVelocityX * (-1); // Change direction after contatct 
             ball.setVelocityX(moveVelocityX);
 
+            moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
             if (moveVelocityY < 0) {
-                moveVelocityY = moveVelocityY * (-1);
+                ball.setVelocityY(moveVelocityY);
+            } else {
+                moveVelocityY = moveVelocityY + 10;
                 ball.setVelocityY(moveVelocityY);
             }
-            
-            player2.setVelocityX(-1);
         };
         
         // Add collider function
