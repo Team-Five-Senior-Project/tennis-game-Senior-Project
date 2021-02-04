@@ -2,7 +2,10 @@ import 'phaser';
 import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
 import PauseScene from './scenes/PauseScene';
+import EndScene from './scenes/EndScene';
 import SliderPlugin from 'phaser3-rex-plugins/plugins/slider-plugin.js';
+
+const WebFont = require('webfontloader');
 
 const config = {
     type: Phaser.AUTO,
@@ -27,7 +30,19 @@ const config = {
         TitleScene,
         GameScene,
         PauseScene,
+        EndScene,
     ],
 };
 
-const game = new Phaser.Game(config); // eslint-disable-line no-unused-vars
+window.addEventListener('load', () => {
+    WebFont.load({
+        google: {
+            families: [
+                'Raleway',
+            ],
+        },
+        fontactive: () => {
+            const game = new Phaser.Game(config); // eslint-disable-line no-unused-vars
+        },
+    });
+});

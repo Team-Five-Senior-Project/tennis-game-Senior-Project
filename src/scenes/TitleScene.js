@@ -11,40 +11,51 @@ class TitleScene extends Phaser.Scene {
     }
 
     create() {
+        let hasPlayer2 = false;
+        let initialTime = 60 * 2; // in seconds
+        let isTimedGame = false;
+
         this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 
-        let startText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Select Your Game');
-        startText.setOrigin(0.5);
-        startText.setScale(5);
+        this.startText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Select Your Game', {
+            fontFamily: 'Raleway',
+            fontSize: '100px',
+            origin: 0.5,
+        }).setOrigin(0.5);
 
-        let onePlayerText = this.add.text(this.cameras.main.centerX - 300, this.cameras.main.centerY + 50, 'One Player');
-        onePlayerText.setOrigin(0.5);
-        onePlayerText.setScale(4);
-        onePlayerText.setInteractive({
+        this.onePlayerText = this.add.text(this.cameras.main.centerX - 300, this.cameras.main.centerY + 50, 'One Player', {
+            fontFamily: 'Raleway',
+            fontSize: '75px',
+        }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
-        });
-        onePlayerText.on('pointerdown', () => {
+        }).on('pointerdown', () => {
             this.scene.start('GameScene', {
                 hasPlayer2: false,
+                initialTime: 10, // in seconds
             });
+            // this.scene.stop();
+
+            // this.scene.start('GameChooseScene', {
+
+            // });
+            // this.scene.stop();
         });
 
-        let twoPlayerText = this.add.text(this.cameras.main.centerX + 300, this.cameras.main.centerY + 50, 'Two Players');
-        twoPlayerText.setOrigin(0.5);
-        twoPlayerText.setScale(4);
-        twoPlayerText.setInteractive({
+        this.twoPlayerText = this.add.text(this.cameras.main.centerX + 300, this.cameras.main.centerY + 50, 'Two Players', {
+            fontFamily: 'Raleway',
+            fontSize: '75px',
+        }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
-        });
-        twoPlayerText.on('pointerdown', () => {
+        }).on('pointerdown', () => {
             this.scene.start('GameScene', {
                 hasPlayer2: true,
+                initialTime: 5, // in seconds
             });
+            // this.scene.stop();
         });
     }
 
-    update() {
-        // 
-    }
+    update() {}
 }
 
 export default TitleScene;
