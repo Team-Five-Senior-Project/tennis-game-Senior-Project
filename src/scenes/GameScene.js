@@ -221,7 +221,7 @@ class GameScene extends Phaser.Scene {
         }
 
         // player 2 scores
-        if (this.ball.x == this.ball.width) {
+        if (this.ball.x === this.ball.width) {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
             this.reset();
@@ -240,7 +240,6 @@ class GameScene extends Phaser.Scene {
     }
 
     reset() {
-        
         // ball movement
         this.moveVelocityX = 800;
         this.moveVelocityY = 100;

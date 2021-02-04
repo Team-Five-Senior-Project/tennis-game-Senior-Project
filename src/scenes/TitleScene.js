@@ -11,10 +11,6 @@ class TitleScene extends Phaser.Scene {
     }
 
     create() {
-        let hasPlayer2 = false;
-        let initialTime = 60 * 2; // in seconds
-        let isTimedGame = false;
-
         this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 
         this.startText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Select Your Game', {
