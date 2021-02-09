@@ -25,16 +25,10 @@ class TitleScene extends Phaser.Scene {
         }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
         }).on('pointerdown', () => {
-            this.scene.start('GameScene', {
+            this.scene.launch('GameChooseScene', {
                 hasPlayer2: false,
-                initialTime: 10, // in seconds
             });
-            // this.scene.stop();
-
-            // this.scene.start('GameChooseScene', {
-
-            // });
-            // this.scene.stop();
+            this.scene.stop();
         });
 
         this.twoPlayerText = this.add.text(this.cameras.main.centerX + 300, this.cameras.main.centerY + 50, 'Two Players', {
@@ -43,11 +37,10 @@ class TitleScene extends Phaser.Scene {
         }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
         }).on('pointerdown', () => {
-            this.scene.start('GameScene', {
+            this.scene.launch('GameChooseScene', {
                 hasPlayer2: true,
-                initialTime: 5, // in seconds
             });
-            // this.scene.stop();
+            this.scene.stop();
         });
     }
 

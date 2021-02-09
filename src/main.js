@@ -1,5 +1,6 @@
 import 'phaser';
 import TitleScene from './scenes/TitleScene';
+import GameChooseScene from './scenes/GameChooseScene';
 import GameScene from './scenes/GameScene';
 import PauseScene from './scenes/PauseScene';
 import EndScene from './scenes/EndScene';
@@ -28,6 +29,7 @@ const config = {
     },
     scene: [
         TitleScene,
+        GameChooseScene,
         GameScene,
         PauseScene,
         EndScene,

@@ -10,6 +10,7 @@ class GameScene extends Phaser.Scene {
     init(data) {
         this.hasPlayer2 = data.hasPlayer2;
         this.initialTime = data.initialTime;
+        this.scoreLimit = data.scoreLimit;
     }
 
     preload() {
@@ -30,32 +31,34 @@ class GameScene extends Phaser.Scene {
         this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
 
         // TODO: conditionally load timer text
-        this.timer = this.initialTime;
-        this.timeText = this.add.text(this.cameras.main.centerX, 75, this.formatTime(this.timer), {
-            fontFamily: 'Raleway',
-            fontSize: '75px',
-        });
-        this.timeText.setOrigin(0.5);
-        this.timedEvent = this.time.addEvent({
-            delay: 1000,
-            callback: () => {
-                if (this.timer > 0) {
-                    this.timer -= 1;
-                    this.timeText.setText(this.formatTime(this.timer));
-                }
-                if (this.timer === 0) {
-                    this.scene.launch('EndScene', {
-                        hasPlayer2: this.hasPlayer2,
-                        initialTime: this.initialTime,
-                        score1: this.score1,
-                        score2: this.score2,
-                    });
-                    this.scene.stop();
-                }
-            },
-            callbackScope: this,
-            loop: true,
-        });
+        if (this.initialTime > 0) {
+            this.timer = this.initialTime;
+            this.timeText = this.add.text(this.cameras.main.centerX, 75, this.formatTime(this.timer), {
+                fontFamily: 'Raleway',
+                fontSize: '75px',
+            });
+            this.timeText.setOrigin(0.5);
+            this.timedEvent = this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    if (this.timer > 0) {
+                        this.timer -= 1;
+                        this.timeText.setText(this.formatTime(this.timer));
+                    }
+                    if (this.timer === 0) {
+                        this.scene.launch('EndScene', {
+                            hasPlayer2: this.hasPlayer2,
+                            initialTime: this.initialTime,
+                            score1: this.score1,
+                            score2: this.score2,
+                        });
+                        this.scene.stop();
+                    }
+                },
+                callbackScope: this,
+                loop: true,
+            });
+        }
 
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -225,6 +228,28 @@ class GameScene extends Phaser.Scene {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
             this.reset();
+        }
+
+        if (this.scoreLimit > 0) {
+            if (this.score1 >= this.scoreLimit) {
+                this.scene.launch('EndScene', {
+                    hasPlayer2: this.hasPlayer2,
+                    initialTime: this.initialTime,
+                    score1: this.score1,
+                    score2: this.score2,
+                });
+                this.scene.stop();
+            }
+
+            if (this.score2 >= this.scoreLimit) {
+                this.scene.launch('EndScene', {
+                    hasPlayer2: this.hasPlayer2,
+                    initialTime: this.initialTime,
+                    score1: this.score1,
+                    score2: this.score2,
+                });
+                this.scene.stop();
+            }
         }
     }
 
