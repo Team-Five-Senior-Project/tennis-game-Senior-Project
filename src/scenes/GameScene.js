@@ -49,6 +49,7 @@ class GameScene extends Phaser.Scene {
                         this.scene.launch('EndScene', {
                             hasPlayer2: this.hasPlayer2,
                             initialTime: this.initialTime,
+                            scoreLimit: this.scoreLimit,
                             score1: this.score1,
                             score2: this.score2,
                         });
@@ -80,6 +81,7 @@ class GameScene extends Phaser.Scene {
             this.scene.launch('PauseScene', {
                 hasPlayer2: this.hasPlayer2,
                 initialTime: this.initialTime,
+                scoreLimit: this.scoreLimit,
             });
             this.scene.pause();
         });
