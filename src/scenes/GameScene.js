@@ -189,6 +189,13 @@ class GameScene extends Phaser.Scene {
     }
 
     update() {
+        // flip ball when moving left
+        if (this.ball.body.velocity.x < 1) {
+            this.ball.flipX = true;
+        } else {
+            this.ball.flipX = false;
+        }
+
         // player 1 keyboard controls (⬆, ⬇)
         if (this.cursorKeys.up.isDown) {
             this.player1.setVelocityY(-500);
