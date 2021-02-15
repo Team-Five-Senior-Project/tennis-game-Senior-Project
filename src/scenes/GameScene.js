@@ -59,6 +59,15 @@ class GameScene extends Phaser.Scene {
                 loop: true,
             });
         }
+        
+        // Countdown before rounds
+        this.countText = 3;
+        this.roundCountDownText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, this.countText, {
+            fontFamily: 'Releway',
+            fontSize: '20em',
+            fill: '#000',
+            align: 'center',
+        });
 
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -128,13 +137,29 @@ class GameScene extends Phaser.Scene {
         this.ball = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'ball')
             .setScale(2)
             .setCollideWorldBounds(true)
-            .setBounce(1);
+            .setBounce(1)
+            .setVisible(false); // Need to hide ball on creation
 
-        // initialize player positions and ball movement
-        this.reset();
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                if (this.countText > 0) {
+                    this.countText -= 1;
+                    this.roundCountDownText.setText((this.countText));
+                    console.log(`from create: ${this.countText}`);
+                }
+                if (this.countText === 0) {
+                    this.roundCountDownText.setVisible(false);
+                    // initialize player positions and ball movement
+                    this.reset();
+                }
+            },
+            callbackScope: this,
+            repeat: 2,
+        });
 
         // Collider function player 1
-        this.hitTHePlayer1 = (ball) => {
+        this.hitThePlayer1 = (ball) => {
             this.moveVelocityX = this.moveVelocityX + 10;
             this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contatct 
             ball.setVelocityX(this.moveVelocityX);
@@ -148,8 +173,8 @@ class GameScene extends Phaser.Scene {
             }
         };
 
-        // Collider function player 1
-        this.hitTHePlayer2 = (ball) => {
+        // Collider function player 2
+        this.hitThePlayer2 = (ball) => {
             this.moveVelocityX = this.moveVelocityX + 10;
             this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contatct 
             ball.setVelocityX(this.moveVelocityX);
@@ -164,8 +189,8 @@ class GameScene extends Phaser.Scene {
         };
         
         // Add collider function
-        this.physics.add.collider(this.ball, this.player1, this.hitTHePlayer1);
-        this.physics.add.collider(this.ball, this.player2, this.hitTHePlayer2);
+        this.physics.add.collider(this.ball, this.player1, this.hitThePlayer1);
+        this.physics.add.collider(this.ball, this.player2, this.hitThePlayer2);
 
         // player 1 score
         this.score1 = 0;
@@ -220,14 +245,71 @@ class GameScene extends Phaser.Scene {
         if (this.ball.x === this.cameras.main.width - this.ball.width) {
             this.score1 += 1;
             this.score1Text.setText(this.score1);
-            this.reset();
+            let p1CountText = 3;
+            this.roundCountDownText.setVisible(true);
+            this.roundCountDownText.setText(p1CountText);
+            // // Reset to the middle
+            this.ball.x = this.cameras.main.width / 2;
+            this.ball.y = this.cameras.main.height / 2;
+            this.ball.setVelocityX(0);
+            this.ball.setVelocityY(0);
+            if (!this.hasPlayer2) {
+                this.player2.setVelocityX(0);
+                this.player2.setVelocityY(0);
+            }
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    if (p1CountText >= 1) {
+                        p1CountText -= 1;
+                        this.roundCountDownText.setText(p1CountText);
+                        console.log(`p1 : ${p1CountText}`);
+                    }
+                    if (p1CountText === 0) {
+                        this.roundCountDownText.setVisible(false);
+                        this.reset();
+                    }
+                },
+                callbackScope: this,
+                repeat: 2,
+            });
+            this.ball.setVisible(false);
         }
 
         // player 2 scores
         if (this.ball.x === this.ball.width) {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
-            this.reset();
+            let p2CountText = 3;
+            this.roundCountDownText.setVisible(true);
+            this.roundCountDownText.setText(p2CountText);
+            // // Reset to the middle
+            this.ball.x = this.cameras.main.width / 2;
+            this.ball.y = this.cameras.main.height / 2;
+            this.ball.setVelocityX(0);
+            this.ball.setVelocityY(0);
+            if (!this.hasPlayer2) {
+                this.player2.setVelocityX(0);
+                this.player2.setVelocityY(0);
+            }
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    if (p2CountText >= 1) {
+                        p2CountText -= 1;
+                        this.roundCountDownText.setText(p2CountText);
+                        console.log(`p2 : ${p2CountText}`);
+                    }
+                    if (p2CountText === 0) {
+                        this.roundCountDownText.setVisible(false);
+                        this.p2CountText = 3;
+                        this.reset();
+                    }
+                },
+                loop: false,
+                repeat: 2,
+            });
+            this.ball.setVisible(false);
         }
 
         if (this.scoreLimit > 0) {
@@ -265,16 +347,50 @@ class GameScene extends Phaser.Scene {
     }
 
     reset() {
-        // ball movement
-        this.moveVelocityX = 800;
-        this.moveVelocityY = 100;
-        this.ball.setVelocityX(this.moveVelocityX);
-        this.ball.setVelocityY(this.moveVelocityY);
+        // TODO: stop computer player ? 
 
-        this.ball.x = this.cameras.main.width / 2;
-        this.ball.y = this.cameras.main.height / 2;
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                // Player 1 scored: ball start goes left!
+                if (this.ball.x <= 960) {
+                    // Ball movement initialization
+                    this.moveVelocityX = 800;
+                    this.moveVelocityY = 100;
 
-        // TODO delay before starting new round?
+                    // // Reset to the middle
+                    this.ball.x = this.cameras.main.width / 2;
+                    this.ball.y = this.cameras.main.height / 2;
+
+                    // Move and change direction
+                    this.ball.setVelocityX(this.moveVelocityX);
+                    this.ball.setVelocityY(this.moveVelocityY);
+                    
+                    // Display
+                    this.ball.setVisible(true);
+
+                    // Log                    
+                    console.log('if statement hit!');
+                } else {
+                    // Ball movement initialization
+                    this.moveVelocityX = 800 * (-1);
+                    this.moveVelocityY = 100;
+
+                    // // Reset to the middle
+                    this.ball.x = this.cameras.main.width / 2;
+                    this.ball.y = this.cameras.main.height / 2;
+
+                    // Movement
+                    this.ball.setVelocityX(this.moveVelocityX);
+                    this.ball.setVelocityY(this.moveVelocityY);
+
+                    // Display
+                    this.ball.setVisible(true);
+                }
+            },
+            callbackScope: this,
+            loop: false,
+        });
     }
 }
 
