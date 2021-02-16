@@ -238,6 +238,8 @@ class GameScene extends Phaser.Scene {
                 this.player2.setVelocityY(250);
             } else if (this.ball.y < this.player2.y) {
                 this.player2.setVelocityY(-250);
+            } else {
+                this.player2.setVelocityY(0);
             }
         }
 
@@ -253,10 +255,6 @@ class GameScene extends Phaser.Scene {
             this.ball.y = this.cameras.main.height / 2;
             this.ball.setVelocityX(0);
             this.ball.setVelocityY(0);
-            if (!this.hasPlayer2) {
-                this.player2.setVelocityX(0);
-                this.player2.setVelocityY(0);
-            }
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
@@ -288,10 +286,6 @@ class GameScene extends Phaser.Scene {
             this.ball.y = this.cameras.main.height / 2;
             this.ball.setVelocityX(0);
             this.ball.setVelocityY(0);
-            if (!this.hasPlayer2) {
-                this.player2.setVelocityX(0);
-                this.player2.setVelocityY(0);
-            }
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
