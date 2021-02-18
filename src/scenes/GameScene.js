@@ -226,14 +226,14 @@ class GameScene extends Phaser.Scene {
         }
 
         // player 1 scores
-        if (this.ball.x === this.cameras.main.width - (this.ball.width / 2)) {
+        if (this.ball.x === this.cameras.main.width - (this.ball.width)) {
             this.score1 += 1;
             this.score1Text.setText(this.score1);
             this.reset();
         }
 
         // player 2 scores
-        if (this.ball.x === (this.ball.width / 2)) {
+        if (this.ball.x === (this.ball.width)) {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
             this.reset();
