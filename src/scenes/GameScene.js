@@ -138,7 +138,7 @@ class GameScene extends Phaser.Scene {
         // Collider function player 1
         this.hitTHePlayer1 = (ball) => {
             this.moveVelocityX = this.moveVelocityX + 10;
-            this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contatct 
+            this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contact 
             ball.setVelocityX(this.moveVelocityX);
             
             this.moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
