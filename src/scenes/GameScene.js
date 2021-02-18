@@ -9,6 +9,8 @@ class GameScene extends Phaser.Scene {
 
     init(data) {
         this.hasPlayer2 = data.hasPlayer2;
+        this.initialTime = data.initialTime;
+        this.scoreLimit = data.scoreLimit;
     }
 
     preload() {
@@ -19,15 +21,46 @@ class GameScene extends Phaser.Scene {
 
     create() {
         this.events.on('pause', () => {
-            pauseText.setVisible(false);
+            this.pauseText.setVisible(false);
         });
 
         this.events.on('resume', () => {
-            pauseText.setVisible(true);
+            this.pauseText.setVisible(true);
         });
 
         this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
-        
+
+        // TODO: conditionally load timer text
+        if (this.initialTime > 0) {
+            this.timer = this.initialTime;
+            this.timeText = this.add.text(this.cameras.main.centerX, 75, this.formatTime(this.timer), {
+                fontFamily: 'Raleway',
+                fontSize: '75px',
+            });
+            this.timeText.setOrigin(0.5);
+            this.timedEvent = this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    if (this.timer > 0) {
+                        this.timer -= 1;
+                        this.timeText.setText(this.formatTime(this.timer));
+                    }
+                    if (this.timer === 0) {
+                        this.scene.launch('EndScene', {
+                            hasPlayer2: this.hasPlayer2,
+                            initialTime: this.initialTime,
+                            scoreLimit: this.scoreLimit,
+                            score1: this.score1,
+                            score2: this.score2,
+                        });
+                        this.scene.stop();
+                    }
+                },
+                callbackScope: this,
+                loop: true,
+            });
+        }
+
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         if (this.hasPlayer2) {
@@ -36,22 +69,28 @@ class GameScene extends Phaser.Scene {
         }
 
         // pause button
-        let pauseText = this.add.text(this.cameras.main.centerX, 50, 'Pause');
-        pauseText.setOrigin(0.5);
-        pauseText.setScale(5);
-        pauseText.setInteractive({
+        this.pauseText = this.add.text(this.cameras.main.centerX, 150, 'Pause', {
+            fontFamily: 'Raleway',
+            fontSize: '75px',
+        });
+        this.pauseText.setOrigin(0.5);
+        this.pauseText.setInteractive({
             useHandCursor: true,
         });
-        pauseText.on('pointerdown', () => {
-            this.scene.launch('PauseScene');
+        this.pauseText.on('pointerdown', () => {
+            this.scene.launch('PauseScene', {
+                hasPlayer2: this.hasPlayer2,
+                initialTime: this.initialTime,
+                scoreLimit: this.scoreLimit,
+            });
             this.scene.pause();
         });
 
         // set up player 1 (left)
-        this.player1 = this.physics.add.sprite(0, this.cameras.main.centerY, 'player');
-        this.player1.setOrigin(0.5);
-        this.player1.setCollideWorldBounds(true);
-        this.player1.setScale(5);
+        this.player1 = this.physics.add.sprite(0, this.cameras.main.centerY, 'player')
+            .setOrigin(0.5)
+            .setCollideWorldBounds(true)
+            .setScale(5);
         this.player1.slider = this.plugins.get('rexSlider').add(this.player1, {
             endPoints: [
                 {
@@ -67,10 +106,10 @@ class GameScene extends Phaser.Scene {
         });
 
         // set up player 2 (right)
-        this.player2 = this.physics.add.sprite(1920, this.cameras.main.centerY, 'player');
-        this.player2.setOrigin(0.5);
-        this.player2.setCollideWorldBounds(true);
-        this.player2.setScale(5);
+        this.player2 = this.physics.add.sprite(1920, this.cameras.main.centerY, 'player')
+            .setOrigin(0.5)
+            .setCollideWorldBounds(true)
+            .setScale(5);
         if (this.hasPlayer2) {
             this.player2.slider = this.plugins.get('rexSlider').add(this.player2, {
                 endPoints: [
@@ -85,58 +124,78 @@ class GameScene extends Phaser.Scene {
                 ],
                 value: 0.5,
             });
-        } else {
-            // TODO: AI-controlled player ¯\_(ツ)_/¯
         }
 
         // Ball oject
-        this.ball = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'ball');
-        this.ball.setScale(2);
-        this.ball.setCollideWorldBounds(true);
-        this.ball.setBounce(1);
+        this.ball = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'ball')
+            .setScale(2)
+            .setCollideWorldBounds(true)
+            .setBounce(1);
 
-        // Ball movement
-        let moveVelocityX = 800;
-        let moveVelocityY = 100;
-        this.ball.setVelocityX(moveVelocityX);
-        this.ball.setVelocityY(moveVelocityY);
+        // initialize player positions and ball movement
+        this.reset();
 
         // Collider function player 1
         this.hitTHePlayer1 = (ball) => {
-            moveVelocityX = moveVelocityX + 10;
-            moveVelocityX = moveVelocityX * (-1); // Change direction after contatct 
-            ball.setVelocityX(moveVelocityX);
+            this.moveVelocityX = this.moveVelocityX + 10;
+            this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contact 
+            ball.setVelocityX(this.moveVelocityX);
             
-            moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
-            if (moveVelocityY < 0) {
-                ball.setVelocityY(moveVelocityY);
+            this.moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
+            if (this.moveVelocityY < 0) {
+                ball.setVelocityY(this.moveVelocityY);
             } else {
-                moveVelocityY = moveVelocityY + 10;
-                ball.setVelocityY(moveVelocityY);
+                this.moveVelocityY = this.moveVelocityY + 10;
+                ball.setVelocityY(this.moveVelocityY);
             }
         };
 
-        // Collider function player 1
+        // Collider function player 2
         this.hitTHePlayer2 = (ball) => {
-            moveVelocityX = moveVelocityX + 10;
-            moveVelocityX = moveVelocityX * (-1); // Change direction after contatct 
-            ball.setVelocityX(moveVelocityX);
+            this.moveVelocityX = this.moveVelocityX + 10;
+            this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contact 
+            ball.setVelocityX(this.moveVelocityX);
 
-            moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
-            if (moveVelocityY < 0) {
-                ball.setVelocityY(moveVelocityY);
+            this.moveVelocityY = Phaser.Math.Between(-1000, 1000); // Give a random Y direction when it hits the player
+            if (this.moveVelocityY < 0) {
+                ball.setVelocityY(this.moveVelocityY);
             } else {
-                moveVelocityY = moveVelocityY + 10;
-                ball.setVelocityY(moveVelocityY);
+                this.moveVelocityY = this.moveVelocityY + 10;
+                ball.setVelocityY(this.moveVelocityY);
             }
         };
         
         // Add collider function
         this.physics.add.collider(this.ball, this.player1, this.hitTHePlayer1);
         this.physics.add.collider(this.ball, this.player2, this.hitTHePlayer2);
+
+        // player 1 score
+        this.score1 = 0;
+        this.score1Text = this.add.text(50, 50, this.score1, {
+            fontFamily: 'Raleway',
+            fontSize: '5em',
+            fill: '#000',
+        });
+        this.score1Text.setOrigin(0.5);
+
+        // player 2 score
+        this.score2 = 0;
+        this.score2Text = this.add.text(this.cameras.main.width - 50, 50, this.score2, {
+            fontFamily: 'Raleway',
+            fontSize: '5em',
+            fill: '#000',
+        });
+        this.score2Text.setOrigin(0.5);
     }
 
     update() {
+        // flip ball when moving left
+        if (this.ball.body.velocity.x < 1) {
+            this.ball.flipX = true;
+        } else {
+            this.ball.flipX = false;
+        }
+
         // player 1 keyboard controls (⬆, ⬇)
         if (this.cursorKeys.up.isDown) {
             this.player1.setVelocityY(-500);
@@ -156,6 +215,75 @@ class GameScene extends Phaser.Scene {
                 this.player2.setVelocityY(0);
             }
         }
+
+        // logic to control computer player
+        if (!this.hasPlayer2) {
+            if (this.ball.y > this.player2.y) {
+                this.player2.setVelocityY(250);
+            } else if (this.ball.y < this.player2.y) {
+                this.player2.setVelocityY(-250);
+            }
+        }
+
+        // player 1 scores
+        if (this.ball.x === this.cameras.main.width - (this.ball.width)) {
+            this.score1 += 1;
+            this.score1Text.setText(this.score1);
+            this.reset();
+        }
+
+        // player 2 scores
+        if (this.ball.x === (this.ball.width)) {
+            this.score2 += 1;
+            this.score2Text.setText(this.score2);
+            this.reset();
+        }
+
+        if (this.scoreLimit > 0) {
+            if (this.score1 >= this.scoreLimit) {
+                this.scene.launch('EndScene', {
+                    hasPlayer2: this.hasPlayer2,
+                    initialTime: this.initialTime,
+                    score1: this.score1,
+                    score2: this.score2,
+                });
+                this.scene.stop();
+            }
+
+            if (this.score2 >= this.scoreLimit) {
+                this.scene.launch('EndScene', {
+                    hasPlayer2: this.hasPlayer2,
+                    initialTime: this.initialTime,
+                    score1: this.score1,
+                    score2: this.score2,
+                });
+                this.scene.stop();
+            }
+        }
+    }
+
+    formatTime(seconds) {
+        // Minutes
+        const minutes = Math.floor(seconds / 60);
+        // Seconds
+        let partInSeconds = seconds % 60;
+        // Adds left zeros to seconds
+        partInSeconds = partInSeconds.toString().padStart(2, '0');
+        // Returns formated time
+        return `${minutes}:${partInSeconds}`;
+    }
+
+    reset() {
+        // ball movement
+        this.moveVelocityX = 800;
+        this.moveVelocityY = 100;
+        this.ball.setVelocityX(this.moveVelocityX);
+        this.ball.setVelocityY(this.moveVelocityY);
+
+        this.ball.x = this.cameras.main.width / 2;
+        this.ball.y = this.cameras.main.height / 2;
+
+        // TODO delay before starting new round?
     }
 }
 
