@@ -49,6 +49,7 @@ class GameScene extends Phaser.Scene {
                         this.scene.launch('EndScene', {
                             hasPlayer2: this.hasPlayer2,
                             initialTime: this.initialTime,
+                            scoreLimit: this.scoreLimit,
                             score1: this.score1,
                             score2: this.score2,
                         });
@@ -89,6 +90,7 @@ class GameScene extends Phaser.Scene {
             this.scene.launch('PauseScene', {
                 hasPlayer2: this.hasPlayer2,
                 initialTime: this.initialTime,
+                scoreLimit: this.scoreLimit,
             });
             this.scene.pause();
         });
@@ -212,6 +214,13 @@ class GameScene extends Phaser.Scene {
     }
 
     update() {
+        // flip ball when moving left
+        if (this.ball.body.velocity.x < 1) {
+            this.ball.flipX = true;
+        } else {
+            this.ball.flipX = false;
+        }
+
         // player 1 keyboard controls (⬆, ⬇)
         if (this.cursorKeys.up.isDown) {
             this.player1.setVelocityY(-500);
