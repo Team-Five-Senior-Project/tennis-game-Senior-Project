@@ -274,7 +274,7 @@ class GameScene extends Phaser.Scene {
                     }
                     if (p1CountText === 0) {
                         this.roundCountDownText.setVisible(false);
-                        this.reset();
+                        this.reset('player1');
                     }
                 },
                 callbackScope: this,
@@ -306,7 +306,7 @@ class GameScene extends Phaser.Scene {
                     if (p2CountText === 0) {
                         this.roundCountDownText.setVisible(false);
                         this.p2CountText = 3;
-                        this.reset();
+                        this.reset('player2');
                     }
                 },
                 loop: false,
@@ -349,47 +349,26 @@ class GameScene extends Phaser.Scene {
         return `${minutes}:${partInSeconds}`;
     }
 
-    reset() {
+    reset(scorer) {
         // TODO: stop computer player ? 
 
         this.time.addEvent({
             delay: 1000,
             callback: () => {
-                // Player 1 scored: ball start goes left!
-                if (this.ball.x <= 960) {
-                    // Ball movement initialization
-                    this.moveVelocityX = 800;
-                    this.moveVelocityY = 100;
+                // Ball movement initialization
+                this.moveVelocityX = 800 * (scorer === 'player1' ? -1 : 1);
+                this.moveVelocityY = 100;
 
-                    // // Reset to the middle
-                    this.ball.x = this.cameras.main.width / 2;
-                    this.ball.y = this.cameras.main.height / 2;
+                // // Reset to the middle
+                this.ball.x = this.cameras.main.width / 2;
+                this.ball.y = this.cameras.main.height / 2;
 
-                    // Move and change direction
-                    this.ball.setVelocityX(this.moveVelocityX);
-                    this.ball.setVelocityY(this.moveVelocityY);
-                    
-                    // Display
-                    this.ball.setVisible(true);
-
-                    // Log                    
-                    console.log('if statement hit!');
-                } else {
-                    // Ball movement initialization
-                    this.moveVelocityX = 800 * (-1);
-                    this.moveVelocityY = 100;
-
-                    // // Reset to the middle
-                    this.ball.x = this.cameras.main.width / 2;
-                    this.ball.y = this.cameras.main.height / 2;
-
-                    // Movement
-                    this.ball.setVelocityX(this.moveVelocityX);
-                    this.ball.setVelocityY(this.moveVelocityY);
-
-                    // Display
-                    this.ball.setVisible(true);
-                }
+                // Move and change direction
+                this.ball.setVelocityX(this.moveVelocityX);
+                this.ball.setVelocityY(this.moveVelocityY);
+                
+                // Display
+                this.ball.setVisible(true);
             },
             callbackScope: this,
             loop: false,
