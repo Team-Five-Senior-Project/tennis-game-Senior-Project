@@ -8,6 +8,7 @@ class PauseScene extends Phaser.Scene {
     init(data) {
         this.hasPlayer2 = data.hasPlayer2;
         this.initialTime = data.initialTime;
+        this.scoreLimit = data.scoreLimit;
     }
 
     preload() {}
@@ -44,6 +45,7 @@ class PauseScene extends Phaser.Scene {
             this.scene.launch('GameScene', {
                 hasPlayer2: this.hasPlayer2,
                 initialTime: this.initialTime,
+                scoreLimit: this.scoreLimit,
             });
             this.scene.stop();
         });
