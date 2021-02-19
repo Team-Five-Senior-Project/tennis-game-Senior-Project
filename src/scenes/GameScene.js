@@ -259,7 +259,7 @@ class GameScene extends Phaser.Scene {
             let p1CountText = 3;
             this.roundCountDownText.setVisible(true);
             this.roundCountDownText.setText(p1CountText);
-            // // Reset to the middle
+            // Reset to the middle
             this.ball.x = this.cameras.main.width / 2;
             this.ball.y = this.cameras.main.height / 2;
             this.ball.setVelocityX(0);
@@ -290,7 +290,7 @@ class GameScene extends Phaser.Scene {
             let p2CountText = 3;
             this.roundCountDownText.setVisible(true);
             this.roundCountDownText.setText(p2CountText);
-            // // Reset to the middle
+            // Reset to the middle
             this.ball.x = this.cameras.main.width / 2;
             this.ball.y = this.cameras.main.height / 2;
             this.ball.setVelocityX(0);
