@@ -17,6 +17,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('ground', 'assets/images/ground.png');
         this.load.image('player', 'assets/images/cloud-paddle.png');
         this.load.image('ball', 'assets/images/ball.png');
+        this.load.image('scoreboard', 'assets/images/scoreboard_with_timer.png');
     }
 
     create() {
@@ -33,11 +34,11 @@ class GameScene extends Phaser.Scene {
         // TODO: conditionally load timer text
         if (this.initialTime > 0) {
             this.timer = this.initialTime;
-            this.timeText = this.add.text(this.cameras.main.centerX, 75, this.formatTime(this.timer), {
+            this.timeText = this.add.text((this.cameras.main.centerX + 200), 100, this.formatTime(this.timer), {
                 fontFamily: 'Raleway',
                 fontSize: '75px',
             });
-            this.timeText.setOrigin(0.5);
+            this.timeText.setOrigin(0.5).setDepth(1);
             this.timedEvent = this.time.addEvent({
                 delay: 1000,
                 callback: () => {
@@ -60,6 +61,15 @@ class GameScene extends Phaser.Scene {
                 loop: true,
             });
         }
+        
+        // Countdown before rounds
+        this.countText = 3;
+        this.roundCountDownText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, this.countText, {
+            fontFamily: 'Releway',
+            fontSize: '20em',
+            fill: '#000',
+            align: 'center',
+        });
 
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -69,11 +79,11 @@ class GameScene extends Phaser.Scene {
         }
 
         // pause button
-        this.pauseText = this.add.text(this.cameras.main.centerX, 150, 'Pause', {
+        this.pauseText = this.add.text((this.cameras.main.centerX + 180), 180, 'Pause', {
             fontFamily: 'Raleway',
-            fontSize: '75px',
+            fontSize: '55px',
         });
-        this.pauseText.setOrigin(0.5);
+        this.pauseText.setOrigin(0.5).setDepth(1);
         this.pauseText.setInteractive({
             useHandCursor: true,
         });
@@ -130,13 +140,30 @@ class GameScene extends Phaser.Scene {
         this.ball = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'ball')
             .setScale(2)
             .setCollideWorldBounds(true)
-            .setBounce(1);
+            .setBounce(1)
+            .setVisible(false) // Need to hide ball on creation
+            .setDepth(1);
 
-        // initialize player positions and ball movement
-        this.reset();
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                if (this.countText > 0) {
+                    this.countText -= 1;
+                    this.roundCountDownText.setText((this.countText));
+                    console.log(`from create: ${this.countText}`);
+                }
+                if (this.countText === 0) {
+                    this.roundCountDownText.setVisible(false);
+                    // initialize player positions and ball movement
+                    this.reset();
+                }
+            },
+            callbackScope: this,
+            repeat: 2,
+        });
 
         // Collider function player 1
-        this.hitTHePlayer1 = (ball) => {
+        this.hitThePlayer1 = (ball) => {
             this.moveVelocityX = this.moveVelocityX + 10;
             this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contact 
             ball.setVelocityX(this.moveVelocityX);
@@ -151,7 +178,7 @@ class GameScene extends Phaser.Scene {
         };
 
         // Collider function player 2
-        this.hitTHePlayer2 = (ball) => {
+        this.hitThePlayer2 = (ball) => {
             this.moveVelocityX = this.moveVelocityX + 10;
             this.moveVelocityX = this.moveVelocityX * (-1); // Change direction after contact 
             ball.setVelocityX(this.moveVelocityX);
@@ -166,26 +193,27 @@ class GameScene extends Phaser.Scene {
         };
         
         // Add collider function
-        this.physics.add.collider(this.ball, this.player1, this.hitTHePlayer1);
-        this.physics.add.collider(this.ball, this.player2, this.hitTHePlayer2);
+        this.physics.add.collider(this.ball, this.player1, this.hitThePlayer1);
+        this.physics.add.collider(this.ball, this.player2, this.hitThePlayer2);
 
         // player 1 score
         this.score1 = 0;
-        this.score1Text = this.add.text(50, 50, this.score1, {
+        this.score1Text = this.add.text((this.cameras.main.centerX - 250), 100, this.score1, {
             fontFamily: 'Raleway',
-            fontSize: '5em',
-            fill: '#000',
+            fontSize: '75px',
         });
-        this.score1Text.setOrigin(0.5);
+        this.score1Text.setOrigin(0.5).setDepth(1);
 
         // player 2 score
         this.score2 = 0;
-        this.score2Text = this.add.text(this.cameras.main.width - 50, 50, this.score2, {
+        this.score2Text = this.add.text((this.cameras.main.centerX - 50), 100, this.score2, {
             fontFamily: 'Raleway',
-            fontSize: '5em',
-            fill: '#000',
+            fontSize: '75px',
         });
-        this.score2Text.setOrigin(0.5);
+        this.score2Text.setOrigin(0.5).setDepth(1);
+
+        // Scoreboard
+        this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboard').setOrigin(0.5);
     }
 
     update() {
@@ -222,6 +250,8 @@ class GameScene extends Phaser.Scene {
                 this.player2.setVelocityY(250);
             } else if (this.ball.y < this.player2.y) {
                 this.player2.setVelocityY(-250);
+            } else {
+                this.player2.setVelocityY(0);
             }
         }
 
@@ -229,14 +259,63 @@ class GameScene extends Phaser.Scene {
         if (this.ball.x === this.cameras.main.width - (this.ball.width)) {
             this.score1 += 1;
             this.score1Text.setText(this.score1);
-            this.reset();
+            let p1CountText = 3;
+            this.roundCountDownText.setVisible(true);
+            this.roundCountDownText.setText(p1CountText);
+            // Reset to the middle
+            this.ball.x = this.cameras.main.width / 2;
+            this.ball.y = this.cameras.main.height / 2;
+            this.ball.setVelocityX(0);
+            this.ball.setVelocityY(0);
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    if (p1CountText >= 1) {
+                        p1CountText -= 1;
+                        this.roundCountDownText.setText(p1CountText);
+                        console.log(`p1 : ${p1CountText}`);
+                    }
+                    if (p1CountText === 0) {
+                        this.roundCountDownText.setVisible(false);
+                        this.reset('player1');
+                    }
+                },
+                callbackScope: this,
+                repeat: 2,
+            });
+            this.ball.setVisible(false);
         }
 
         // player 2 scores
         if (this.ball.x === (this.ball.width)) {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
-            this.reset();
+            let p2CountText = 3;
+            this.roundCountDownText.setVisible(true);
+            this.roundCountDownText.setText(p2CountText);
+            // Reset to the middle
+            this.ball.x = this.cameras.main.width / 2;
+            this.ball.y = this.cameras.main.height / 2;
+            this.ball.setVelocityX(0);
+            this.ball.setVelocityY(0);
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    if (p2CountText >= 1) {
+                        p2CountText -= 1;
+                        this.roundCountDownText.setText(p2CountText);
+                        console.log(`p2 : ${p2CountText}`);
+                    }
+                    if (p2CountText === 0) {
+                        this.roundCountDownText.setVisible(false);
+                        this.p2CountText = 3;
+                        this.reset('player2');
+                    }
+                },
+                loop: false,
+                repeat: 2,
+            });
+            this.ball.setVisible(false);
         }
 
         if (this.scoreLimit > 0) {
@@ -270,20 +349,33 @@ class GameScene extends Phaser.Scene {
         // Adds left zeros to seconds
         partInSeconds = partInSeconds.toString().padStart(2, '0');
         // Returns formated time
-        return `${minutes}:${partInSeconds}`;
+        return `${minutes}   ${partInSeconds}`;
     }
 
-    reset() {
-        // ball movement
-        this.moveVelocityX = 800;
-        this.moveVelocityY = 100;
-        this.ball.setVelocityX(this.moveVelocityX);
-        this.ball.setVelocityY(this.moveVelocityY);
+    reset(scorer) {
+        // TODO: stop computer player ? 
 
-        this.ball.x = this.cameras.main.width / 2;
-        this.ball.y = this.cameras.main.height / 2;
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                // Ball movement initialization
+                this.moveVelocityX = 800 * (scorer === 'player1' ? -1 : 1);
+                this.moveVelocityY = 100;
 
-        // TODO delay before starting new round?
+                // // Reset to the middle
+                this.ball.x = this.cameras.main.width / 2;
+                this.ball.y = this.cameras.main.height / 2;
+
+                // Move and change direction
+                this.ball.setVelocityX(this.moveVelocityX);
+                this.ball.setVelocityY(this.moveVelocityY);
+                
+                // Display
+                this.ball.setVisible(true);
+            },
+            callbackScope: this,
+            loop: false,
+        });
     }
 }
 
