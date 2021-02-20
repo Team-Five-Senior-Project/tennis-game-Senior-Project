@@ -17,6 +17,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('ground', 'assets/images/ground.png');
         this.load.image('player', 'assets/images/cloud-paddle.png');
         this.load.image('ball', 'assets/images/ball.png');
+        this.load.image('scoreboard', 'assets/images/scoreboard_with_timer.png');
     }
 
     create() {
@@ -33,11 +34,11 @@ class GameScene extends Phaser.Scene {
         // TODO: conditionally load timer text
         if (this.initialTime > 0) {
             this.timer = this.initialTime;
-            this.timeText = this.add.text(this.cameras.main.centerX, 75, this.formatTime(this.timer), {
+            this.timeText = this.add.text((this.cameras.main.centerX + 200), 100, this.formatTime(this.timer), {
                 fontFamily: 'Raleway',
                 fontSize: '75px',
             });
-            this.timeText.setOrigin(0.5);
+            this.timeText.setOrigin(0.5).setDepth(1);
             this.timedEvent = this.time.addEvent({
                 delay: 1000,
                 callback: () => {
@@ -78,11 +79,11 @@ class GameScene extends Phaser.Scene {
         }
 
         // pause button
-        this.pauseText = this.add.text(this.cameras.main.centerX, 150, 'Pause', {
+        this.pauseText = this.add.text((this.cameras.main.centerX + 180), 180, 'Pause', {
             fontFamily: 'Raleway',
-            fontSize: '75px',
+            fontSize: '55px',
         });
-        this.pauseText.setOrigin(0.5);
+        this.pauseText.setOrigin(0.5).setDepth(1);
         this.pauseText.setInteractive({
             useHandCursor: true,
         });
@@ -140,7 +141,8 @@ class GameScene extends Phaser.Scene {
             .setScale(2)
             .setCollideWorldBounds(true)
             .setBounce(1)
-            .setVisible(false); // Need to hide ball on creation
+            .setVisible(false) // Need to hide ball on creation
+            .setDepth(1);
 
         this.time.addEvent({
             delay: 1000,
@@ -196,21 +198,22 @@ class GameScene extends Phaser.Scene {
 
         // player 1 score
         this.score1 = 0;
-        this.score1Text = this.add.text(50, 50, this.score1, {
+        this.score1Text = this.add.text((this.cameras.main.centerX - 250), 100, this.score1, {
             fontFamily: 'Raleway',
-            fontSize: '5em',
-            fill: '#000',
+            fontSize: '75px',
         });
-        this.score1Text.setOrigin(0.5);
+        this.score1Text.setOrigin(0.5).setDepth(1);
 
         // player 2 score
         this.score2 = 0;
-        this.score2Text = this.add.text(this.cameras.main.width - 50, 50, this.score2, {
+        this.score2Text = this.add.text((this.cameras.main.centerX - 50), 100, this.score2, {
             fontFamily: 'Raleway',
-            fontSize: '5em',
-            fill: '#000',
+            fontSize: '75px',
         });
-        this.score2Text.setOrigin(0.5);
+        this.score2Text.setOrigin(0.5).setDepth(1);
+
+        // Scoreboard
+        this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboard').setOrigin(0.5);
     }
 
     update() {
@@ -346,7 +349,7 @@ class GameScene extends Phaser.Scene {
         // Adds left zeros to seconds
         partInSeconds = partInSeconds.toString().padStart(2, '0');
         // Returns formated time
-        return `${minutes}:${partInSeconds}`;
+        return `${minutes}   ${partInSeconds}`;
     }
 
     reset(scorer) {
