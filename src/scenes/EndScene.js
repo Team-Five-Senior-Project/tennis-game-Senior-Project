@@ -14,21 +14,27 @@ class EndScene extends Phaser.Scene {
         this.numPlayers = this.hasPlayer2 ? 2 : 1;
     }
 
-    preload() {}
+    preload() {
+        this.load.image('game_backgroud', 'assets/images/game_background.jpg');
+    }
 
     create() {
+        this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'game_backgroud');
+
         this.gameOverText = this.add.text(this.cameras.main.centerX, 150, 'GAME OVER', {
-            fontFamily: 'Raleway',
+            fontFamily: 'Roboto',
             fontSize: '100px',
         }).setOrigin(0.5);
-
+        
+        let scoreP1Txt = `Your Score: ${this.score1}`;
+        let scoreP2Txt = `Your Score: ${this.score2}`;
         let winnerTextStr = null;
         if (this.score1 === this.score2) {
             winnerTextStr = 'It was a tie!';
         } else {
             switch (this.numPlayers) {
                 case 1:
-                    winnerTextStr = this.score1 > this.score2 ? 'Congratulations! ' : 'Nice try! ';
+                    winnerTextStr = this.score1 > this.score2 ? `Congratulations! Player ${this.numPlayers}` : 'Nice try!';
                     break;
                 case 2:
                     winnerTextStr = `Congratulations Player ${this.score1 > this.score2 ? 1 : 2}`;
@@ -38,13 +44,30 @@ class EndScene extends Phaser.Scene {
             }
         }
         
-        this.winnerText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, winnerTextStr, {
-            fontFamily: 'Raleway',
+        this.yourScoreTxtP1 = this.add.text(this.cameras.main.centerX, (this.cameras.main.centerY / 2) + 300, scoreP1Txt, {
+            fontFamily: 'Roboto',
+            fontSize: '75px',
+        }).setOrigin(0.5).setVisible(false);
+
+        this.yourScoreTxtP2 = this.add.text(this.cameras.main.centerX, (this.cameras.main.centerY / 2) + 300, scoreP2Txt, {
+            fontFamily: 'Roboto',
+            fontSize: '75px',
+        }).setOrigin(0.5).setVisible(false);
+
+        // Conditionally display player's score
+        if (this.score1 > this.score2) {
+            this.yourScoreTxtP1.setVisible(true);
+        } else if (this.numPlayers === 2 && this.score1 < this.score2) {
+            this.yourScoreTxtP2.setVisible(true);
+        }
+        
+        this.winnerText = this.add.text(this.cameras.main.centerX, (this.cameras.main.centerY / 2) + 200, winnerTextStr, {
+            fontFamily: 'Roboto',
             fontSize: '75px',
         }).setOrigin(0.5);
 
         this.restartText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 200, 'Main Menu', {
-            fontFamily: 'Raleway',
+            fontFamily: 'Roboto',
             fontSize: '50px',
         }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
@@ -52,10 +75,10 @@ class EndScene extends Phaser.Scene {
             this.scene.launch('TitleScene');
             this.scene.stop();
         });
-
+        
         // reset current game
         this.resetGameText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 250, 'Reset Game', {
-            fontFamily: 'Raleway',
+            fontFamily: 'Roboto',
             fontSize: '50px',
         }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
