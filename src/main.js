@@ -41,6 +41,7 @@ window.addEventListener('load', () => {
         google: {
             families: [
                 'Raleway',
+                'Roboto',
             ],
         },
         fontactive: () => {
