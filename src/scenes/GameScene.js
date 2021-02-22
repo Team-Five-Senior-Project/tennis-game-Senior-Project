@@ -24,10 +24,16 @@ class GameScene extends Phaser.Scene {
     create() {
         this.events.on('pause', () => {
             this.pauseText.setVisible(false);
+            this.roundCountDownText.setVisible(false);
         });
 
         this.events.on('resume', () => {
             this.pauseText.setVisible(true);
+            if (parseInt(this.roundCountDownText.text) > 0) {
+                this.roundCountDownText.setVisible(true);
+            } else {
+                this.roundCountDownText.setVisible(false);
+            }
         });
 
         this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
@@ -81,11 +87,11 @@ class GameScene extends Phaser.Scene {
         // pause button
         let pauseOffset = 0;
         if (this.initialTime > 0) {
-            pauseOffset = 180;
+            pauseOffset = 140;
         }
-        this.pauseText = this.add.text((this.cameras.main.centerX + pauseOffset), 180, 'Pause', {
+        this.pauseText = this.add.text((this.cameras.main.centerX - pauseOffset), 180, 'Pause', {
             fontFamily: 'Roboto',
-            fontSize: '55px',
+            fontSize: '40px',
         });
         this.pauseText.setOrigin(0.5).setDepth(1);
         this.pauseText.setInteractive({
@@ -275,9 +281,9 @@ class GameScene extends Phaser.Scene {
         if (this.ball.x === this.cameras.main.width - (this.ball.width)) {
             this.score1 += 1;
             this.score1Text.setText(this.score1);
-            let p1CountText = 3;
+            this.countText = 3;
             this.roundCountDownText.setVisible(true);
-            this.roundCountDownText.setText(p1CountText);
+            this.roundCountDownText.setText(this.countText);
             // Reset to the middle
             this.ball.x = this.cameras.main.width / 2;
             this.ball.y = this.cameras.main.height / 2;
@@ -286,11 +292,11 @@ class GameScene extends Phaser.Scene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    if (p1CountText >= 1) {
-                        p1CountText -= 1;
-                        this.roundCountDownText.setText(p1CountText);
+                    if (this.countText >= 1) {
+                        this.countText -= 1;
+                        this.roundCountDownText.setText(this.countText);
                     }
-                    if (p1CountText === 0) {
+                    if (this.countText === 0) {
                         this.roundCountDownText.setVisible(false);
                         this.reset('player1');
                     }
@@ -305,9 +311,9 @@ class GameScene extends Phaser.Scene {
         if (this.ball.x === (this.ball.width)) {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
-            let p2CountText = 3;
+            this.countText = 3;
             this.roundCountDownText.setVisible(true);
-            this.roundCountDownText.setText(p2CountText);
+            this.roundCountDownText.setText(this.countText);
             // Reset to the middle
             this.ball.x = this.cameras.main.width / 2;
             this.ball.y = this.cameras.main.height / 2;
@@ -316,13 +322,13 @@ class GameScene extends Phaser.Scene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    if (p2CountText >= 1) {
-                        p2CountText -= 1;
-                        this.roundCountDownText.setText(p2CountText);
+                    if (this.countText >= 1) {
+                        this.countText -= 1;
+                        this.roundCountDownText.setText(this.countText);
                     }
-                    if (p2CountText === 0) {
+                    if (this.countText === 0) {
                         this.roundCountDownText.setVisible(false);
-                        this.p2CountText = 3;
+                        this.countText = 3;
                         this.reset('player2');
                     }
                 },
@@ -337,6 +343,7 @@ class GameScene extends Phaser.Scene {
                 this.scene.launch('EndScene', {
                     hasPlayer2: this.hasPlayer2,
                     initialTime: this.initialTime,
+                    scoreLimit: this.scoreLimit,
                     score1: this.score1,
                     score2: this.score2,
                 });
@@ -347,6 +354,7 @@ class GameScene extends Phaser.Scene {
                 this.scene.launch('EndScene', {
                     hasPlayer2: this.hasPlayer2,
                     initialTime: this.initialTime,
+                    scoreLimit: this.scoreLimit,
                     score1: this.score1,
                     score2: this.score2,
                 });
