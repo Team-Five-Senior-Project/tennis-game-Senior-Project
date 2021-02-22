@@ -40,7 +40,6 @@ window.addEventListener('load', () => {
     WebFont.load({
         google: {
             families: [
-                'Raleway',
                 'Roboto',
             ],
         },
