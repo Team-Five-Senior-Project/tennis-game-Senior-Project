@@ -15,7 +15,7 @@ class PauseScene extends Phaser.Scene {
 
     create() {
         this.resumeText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Resume Game', {
-            fontFamily: 'Raleway',
+            fontFamily: 'Roboto',
             fontSize: '75px',
             color: '#124E78',
         }).setOrigin(0.5).setInteractive({
@@ -26,7 +26,7 @@ class PauseScene extends Phaser.Scene {
         });
 
         this.resetGameText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Reset Game', {
-            fontFamily: 'Raleway',
+            fontFamily: 'Roboto',
             fontSize: '75px',
             color: '#124E78',
         }).setOrigin(0.5).setInteractive({
@@ -42,7 +42,7 @@ class PauseScene extends Phaser.Scene {
         });
 
         this.mainMenuText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Main Menu', {
-            fontFamily: 'Raleway',
+            fontFamily: 'Roboto',
             fontSize: '75px',
             color: '#124E78',
         }).setOrigin(0.5).setInteractive({
