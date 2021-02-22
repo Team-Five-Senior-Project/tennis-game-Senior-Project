@@ -14,9 +14,10 @@ class PauseScene extends Phaser.Scene {
     preload() {}
 
     create() {
-        this.resumeText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Resume', {
+        this.resumeText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'Resume Game', {
             fontFamily: 'Raleway',
             fontSize: '75px',
+            color: '#124E78',
         }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
         }).on('pointerdown', () => {
@@ -24,20 +25,10 @@ class PauseScene extends Phaser.Scene {
             this.scene.stop();
         });
 
-        this.restartText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Main Menu', {
+        this.resetGameText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Reset Game', {
             fontFamily: 'Raleway',
             fontSize: '75px',
-        }).setOrigin(0.5).setInteractive({
-            useHandCursor: true,
-        }).on('pointerdown', () => {
-            this.scene.launch('TitleScene');
-            this.scene.stop('GameScene');
-            this.scene.stop();
-        });
-
-        this.resetGameText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 250, 'Reset Game', {
-            fontFamily: 'Raleway',
-            fontSize: '75px',
+            color: '#124E78',
         }).setOrigin(0.5).setInteractive({
             useHandCursor: true,
         }).on('pointerdown', () => {
@@ -47,6 +38,18 @@ class PauseScene extends Phaser.Scene {
                 initialTime: this.initialTime,
                 scoreLimit: this.scoreLimit,
             });
+            this.scene.stop();
+        });
+
+        this.mainMenuText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 100, 'Main Menu', {
+            fontFamily: 'Raleway',
+            fontSize: '75px',
+            color: '#124E78',
+        }).setOrigin(0.5).setInteractive({
+            useHandCursor: true,
+        }).on('pointerdown', () => {
+            this.scene.launch('TitleScene');
+            this.scene.stop('GameScene');
             this.scene.stop();
         });
     }

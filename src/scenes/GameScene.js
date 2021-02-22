@@ -14,10 +14,11 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('ground', 'assets/images/ground.png');
-        this.load.image('player', 'assets/images/cloud-paddle.png');
-        this.load.image('ball', 'assets/images/ball.png');
-        this.load.image('scoreboard', 'assets/images/scoreboard_with_timer.png');
+        this.load.image('ground', 'assets/images/game_background.jpg');
+        this.load.image('player', 'assets/images/paddle__clouds__left.png');
+        this.load.image('ball', 'assets/images/airplane__ball__2.png');
+        this.load.image('scoreboardTimer', 'assets/images/scoreboard_with_timer.png');
+        this.load.image('scoreboard', 'assets/images/scoreboard.png');
     }
 
     create() {
@@ -31,14 +32,13 @@ class GameScene extends Phaser.Scene {
 
         this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
 
-        // TODO: conditionally load timer text
+        // timer text
         if (this.initialTime > 0) {
             this.timer = this.initialTime;
             this.timeText = this.add.text((this.cameras.main.centerX + 200), 110, this.formatTime(this.timer), {
                 fontFamily: 'Roboto',
                 fontSize: '75px',
-            });
-            this.timeText.setOrigin(0.5).setDepth(1);
+            }).setOrigin(0.5).setDepth(1);
             this.timedEvent = this.time.addEvent({
                 delay: 1000,
                 callback: () => {
@@ -69,7 +69,7 @@ class GameScene extends Phaser.Scene {
             fontSize: '20em',
             fill: '#000',
             align: 'center',
-        });
+        }).setOrigin(0.5);
 
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -79,7 +79,11 @@ class GameScene extends Phaser.Scene {
         }
 
         // pause button
-        this.pauseText = this.add.text((this.cameras.main.centerX + 180), 180, 'Pause', {
+        let pauseOffset = 0;
+        if (this.initialTime > 0) {
+            pauseOffset = 180;
+        }
+        this.pauseText = this.add.text((this.cameras.main.centerX + pauseOffset), 180, 'Pause', {
             fontFamily: 'Roboto',
             fontSize: '55px',
         });
@@ -100,7 +104,7 @@ class GameScene extends Phaser.Scene {
         this.player1 = this.physics.add.sprite(0, this.cameras.main.centerY, 'player')
             .setOrigin(0.5)
             .setCollideWorldBounds(true)
-            .setScale(5);
+            .setScale(1.5);
         this.player1.slider = this.plugins.get('rexSlider').add(this.player1, {
             endPoints: [
                 {
@@ -119,7 +123,8 @@ class GameScene extends Phaser.Scene {
         this.player2 = this.physics.add.sprite(1920, this.cameras.main.centerY, 'player')
             .setOrigin(0.5)
             .setCollideWorldBounds(true)
-            .setScale(5);
+            .setScale(1.5);
+        this.player2.flipX = true;
         if (this.hasPlayer2) {
             this.player2.slider = this.plugins.get('rexSlider').add(this.player2, {
                 endPoints: [
@@ -196,23 +201,35 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.ball, this.player2, this.hitThePlayer2);
 
         // player 1 score
+        let score1Offset = 90;
+        if (this.initialTime > 0) {
+            score1Offset = 230;
+        }
         this.score1 = 0;
-        this.score1Text = this.add.text((this.cameras.main.centerX - 230), 110, this.score1, {
+        this.score1Text = this.add.text((this.cameras.main.centerX - score1Offset), 110, this.score1, {
             fontFamily: 'Roboto',
             fontSize: '75px',
         });
         this.score1Text.setOrigin(0.5).setDepth(1);
 
         // player 2 score
+        let score2Offset = -90;
+        if (this.initialTime > 0) {
+            score2Offset = 50;
+        }
         this.score2 = 0;
-        this.score2Text = this.add.text((this.cameras.main.centerX - 50), 110, this.score2, {
+        this.score2Text = this.add.text((this.cameras.main.centerX - score2Offset), 110, this.score2, {
             fontFamily: 'Roboto',
             fontSize: '75px',
         });
         this.score2Text.setOrigin(0.5).setDepth(1);
 
         // Scoreboard
-        this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboard').setOrigin(0.5);
+        if (this.initialTime > 0) {
+            this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboardTimer').setOrigin(0.5);
+        } else {
+            this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboard').setOrigin(0.5);
+        }
     }
 
     update() {
