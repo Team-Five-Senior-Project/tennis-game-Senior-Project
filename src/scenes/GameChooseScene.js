@@ -118,7 +118,7 @@ class GameChooseScene extends Phaser.Scene {
             this.scene.stop();
         });
 
-        this.restartText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 300, 'Back to Main Menu', {
+        this.mainMenuText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 300, 'Back to Main Menu', {
             fontFamily: 'Roboto',
             fontSize: '75px',
             color: '#124E78',
