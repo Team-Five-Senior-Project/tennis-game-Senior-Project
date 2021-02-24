@@ -38,6 +38,17 @@ class TitleScene extends Phaser.Scene {
             });
             this.scene.stop();
         });
+
+        this.creditsText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 400, 'Credits', {
+            fontFamily: 'Roboto',
+            fontSize: '50px',
+            color: '#124E78',
+        }).setOrigin(0.5).setInteractive({
+            useHandCursor: true,
+        }).on('pointerdown', () => {
+            this.scene.launch('CreditsScene');
+            this.scene.stop();
+        });
     }
 
     update() {}
