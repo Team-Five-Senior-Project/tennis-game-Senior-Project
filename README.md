@@ -52,3 +52,5 @@ To build for deployment, run:
 ```
 npm run deploy
 ```
+
+When running the locally or on the automatic Netlify build, the precise dimensions of 1920x1080 must be used to play the game.
