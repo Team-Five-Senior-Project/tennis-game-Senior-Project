@@ -11,10 +11,20 @@ class GameChooseScene extends Phaser.Scene {
 
     preload() {
         this.load.image('bg', 'assets/images/game_background.jpg');
+
+        this.load.image('logo_auntieannes', 'assets/images/auntieannes.png');
+        this.load.image('logo_burritobeach', 'assets/images/bb.png');
+        this.load.image('logo_chicagosports', 'assets/images/chisports.png');
+        this.load.image('logo_dunkindonuts', 'assets/images/dd.png');
     }
 
     create() {
         this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
+
+        this.logo1 = this.add.image(150, 100, 'logo_auntieannes');
+        this.logo2 = this.add.image(this.cameras.main.width - 450, 125, 'logo_burritobeach');
+        this.logo3 = this.add.image(this.cameras.main.width - 175, 250, 'logo_chicagosports');
+        this.logo4 = this.add.image(150, 250, 'logo_dunkindonuts');
 
         this.timedGameText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 300, 'Timed Game', {
             fontFamily: 'Roboto',

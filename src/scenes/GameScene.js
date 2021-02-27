@@ -14,11 +14,16 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('ground', 'assets/images/game_background.jpg');
+        this.load.image('bg', 'assets/images/game_background.jpg');
         this.load.image('player', 'assets/images/paddle__clouds__left.png');
         this.load.image('ball', 'assets/images/airplane__ball__2.png');
         this.load.image('scoreboardTimer', 'assets/images/scoreboard_with_timer.png');
         this.load.image('scoreboard', 'assets/images/scoreboard.png');
+
+        this.load.image('logo_auntieannes', 'assets/images/auntieannes.png');
+        this.load.image('logo_burritobeach', 'assets/images/bb.png');
+        this.load.image('logo_chicagosports', 'assets/images/chisports.png');
+        this.load.image('logo_dunkindonuts', 'assets/images/dd.png');
     }
 
     create() {
@@ -36,7 +41,12 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
+        this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
+
+        this.logo1 = this.add.image(150, 100, 'logo_auntieannes');
+        this.logo2 = this.add.image(this.cameras.main.width - 450, 125, 'logo_burritobeach');
+        this.logo3 = this.add.image(this.cameras.main.width - 175, 250, 'logo_chicagosports');
+        this.logo4 = this.add.image(150, 250, 'logo_dunkindonuts');
 
         // timer text
         if (this.initialTime > 0) {
@@ -375,8 +385,6 @@ class GameScene extends Phaser.Scene {
     }
 
     reset(scorer) {
-        // TODO: stop computer player ? 
-
         this.time.addEvent({
             delay: 1000,
             callback: () => {
