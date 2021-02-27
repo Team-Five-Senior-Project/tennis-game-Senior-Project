@@ -14,31 +14,47 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('ground', 'assets/images/ground.png');
-        this.load.image('player', 'assets/images/cloud-paddle.png');
-        this.load.image('ball', 'assets/images/ball.png');
-        this.load.image('scoreboard', 'assets/images/scoreboard_with_timer.png');
+        this.load.image('bg', 'assets/images/game_background.jpg');
+        this.load.image('player', 'assets/images/paddle__clouds__left.png');
+        this.load.image('ball', 'assets/images/airplane__ball__2.png');
+        this.load.image('scoreboardTimer', 'assets/images/scoreboard_with_timer.png');
+        this.load.image('scoreboard', 'assets/images/scoreboard.png');
+
+        this.load.image('logo_auntieannes', 'assets/images/auntieannes.png');
+        this.load.image('logo_burritobeach', 'assets/images/bb.png');
+        this.load.image('logo_chicagosports', 'assets/images/chisports.png');
+        this.load.image('logo_dunkindonuts', 'assets/images/dd.png');
     }
 
     create() {
         this.events.on('pause', () => {
             this.pauseText.setVisible(false);
+            this.roundCountDownText.setVisible(false);
         });
 
         this.events.on('resume', () => {
             this.pauseText.setVisible(true);
+            if (parseInt(this.roundCountDownText.text) > 0) {
+                this.roundCountDownText.setVisible(true);
+            } else {
+                this.roundCountDownText.setVisible(false);
+            }
         });
 
-        this.ground = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'ground');
+        this.bg = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'bg');
 
-        // TODO: conditionally load timer text
+        this.logo1 = this.add.image(150, 100, 'logo_auntieannes');
+        this.logo2 = this.add.image(this.cameras.main.width - 450, 125, 'logo_burritobeach');
+        this.logo3 = this.add.image(this.cameras.main.width - 175, 250, 'logo_chicagosports');
+        this.logo4 = this.add.image(150, 250, 'logo_dunkindonuts');
+
+        // timer text
         if (this.initialTime > 0) {
             this.timer = this.initialTime;
-            this.timeText = this.add.text((this.cameras.main.centerX + 200), 100, this.formatTime(this.timer), {
-                fontFamily: 'Raleway',
+            this.timeText = this.add.text((this.cameras.main.centerX + 200), 110, this.formatTime(this.timer), {
+                fontFamily: 'Roboto',
                 fontSize: '75px',
-            });
-            this.timeText.setOrigin(0.5).setDepth(1);
+            }).setOrigin(0.5).setDepth(1);
             this.timedEvent = this.time.addEvent({
                 delay: 1000,
                 callback: () => {
@@ -65,11 +81,11 @@ class GameScene extends Phaser.Scene {
         // Countdown before rounds
         this.countText = 3;
         this.roundCountDownText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, this.countText, {
-            fontFamily: 'Releway',
+            fontFamily: 'Roboto',
             fontSize: '20em',
             fill: '#000',
             align: 'center',
-        });
+        }).setOrigin(0.5);
 
         // temporarily allow keyboard control
         this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -79,9 +95,13 @@ class GameScene extends Phaser.Scene {
         }
 
         // pause button
-        this.pauseText = this.add.text((this.cameras.main.centerX + 180), 180, 'Pause', {
-            fontFamily: 'Raleway',
-            fontSize: '55px',
+        let pauseOffset = 0;
+        if (this.initialTime > 0) {
+            pauseOffset = 140;
+        }
+        this.pauseText = this.add.text((this.cameras.main.centerX - pauseOffset), 180, 'Pause', {
+            fontFamily: 'Roboto',
+            fontSize: '40px',
         });
         this.pauseText.setOrigin(0.5).setDepth(1);
         this.pauseText.setInteractive({
@@ -100,7 +120,7 @@ class GameScene extends Phaser.Scene {
         this.player1 = this.physics.add.sprite(0, this.cameras.main.centerY, 'player')
             .setOrigin(0.5)
             .setCollideWorldBounds(true)
-            .setScale(5);
+            .setScale(1.5);
         this.player1.slider = this.plugins.get('rexSlider').add(this.player1, {
             endPoints: [
                 {
@@ -119,7 +139,8 @@ class GameScene extends Phaser.Scene {
         this.player2 = this.physics.add.sprite(1920, this.cameras.main.centerY, 'player')
             .setOrigin(0.5)
             .setCollideWorldBounds(true)
-            .setScale(5);
+            .setScale(1.5);
+        this.player2.flipX = true;
         if (this.hasPlayer2) {
             this.player2.slider = this.plugins.get('rexSlider').add(this.player2, {
                 endPoints: [
@@ -150,7 +171,6 @@ class GameScene extends Phaser.Scene {
                 if (this.countText > 0) {
                     this.countText -= 1;
                     this.roundCountDownText.setText((this.countText));
-                    console.log(`from create: ${this.countText}`);
                 }
                 if (this.countText === 0) {
                     this.roundCountDownText.setVisible(false);
@@ -197,23 +217,35 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.ball, this.player2, this.hitThePlayer2);
 
         // player 1 score
+        let score1Offset = 90;
+        if (this.initialTime > 0) {
+            score1Offset = 230;
+        }
         this.score1 = 0;
-        this.score1Text = this.add.text((this.cameras.main.centerX - 250), 100, this.score1, {
-            fontFamily: 'Raleway',
+        this.score1Text = this.add.text((this.cameras.main.centerX - score1Offset), 110, this.score1, {
+            fontFamily: 'Roboto',
             fontSize: '75px',
         });
         this.score1Text.setOrigin(0.5).setDepth(1);
 
         // player 2 score
+        let score2Offset = -90;
+        if (this.initialTime > 0) {
+            score2Offset = 50;
+        }
         this.score2 = 0;
-        this.score2Text = this.add.text((this.cameras.main.centerX - 50), 100, this.score2, {
-            fontFamily: 'Raleway',
+        this.score2Text = this.add.text((this.cameras.main.centerX - score2Offset), 110, this.score2, {
+            fontFamily: 'Roboto',
             fontSize: '75px',
         });
         this.score2Text.setOrigin(0.5).setDepth(1);
 
         // Scoreboard
-        this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboard').setOrigin(0.5);
+        if (this.initialTime > 0) {
+            this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboardTimer').setOrigin(0.5);
+        } else {
+            this.scoreboard = this.add.sprite(this.cameras.main.centerX, (this.cameras.main.centerY - 435), 'scoreboard').setOrigin(0.5);
+        }
     }
 
     update() {
@@ -259,9 +291,9 @@ class GameScene extends Phaser.Scene {
         if (this.ball.x === this.cameras.main.width - (this.ball.width)) {
             this.score1 += 1;
             this.score1Text.setText(this.score1);
-            let p1CountText = 3;
+            this.countText = 3;
             this.roundCountDownText.setVisible(true);
-            this.roundCountDownText.setText(p1CountText);
+            this.roundCountDownText.setText(this.countText);
             // Reset to the middle
             this.ball.x = this.cameras.main.width / 2;
             this.ball.y = this.cameras.main.height / 2;
@@ -270,12 +302,11 @@ class GameScene extends Phaser.Scene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    if (p1CountText >= 1) {
-                        p1CountText -= 1;
-                        this.roundCountDownText.setText(p1CountText);
-                        console.log(`p1 : ${p1CountText}`);
+                    if (this.countText >= 1) {
+                        this.countText -= 1;
+                        this.roundCountDownText.setText(this.countText);
                     }
-                    if (p1CountText === 0) {
+                    if (this.countText === 0) {
                         this.roundCountDownText.setVisible(false);
                         this.reset('player1');
                     }
@@ -290,9 +321,9 @@ class GameScene extends Phaser.Scene {
         if (this.ball.x === (this.ball.width)) {
             this.score2 += 1;
             this.score2Text.setText(this.score2);
-            let p2CountText = 3;
+            this.countText = 3;
             this.roundCountDownText.setVisible(true);
-            this.roundCountDownText.setText(p2CountText);
+            this.roundCountDownText.setText(this.countText);
             // Reset to the middle
             this.ball.x = this.cameras.main.width / 2;
             this.ball.y = this.cameras.main.height / 2;
@@ -301,14 +332,13 @@ class GameScene extends Phaser.Scene {
             this.time.addEvent({
                 delay: 1000,
                 callback: () => {
-                    if (p2CountText >= 1) {
-                        p2CountText -= 1;
-                        this.roundCountDownText.setText(p2CountText);
-                        console.log(`p2 : ${p2CountText}`);
+                    if (this.countText >= 1) {
+                        this.countText -= 1;
+                        this.roundCountDownText.setText(this.countText);
                     }
-                    if (p2CountText === 0) {
+                    if (this.countText === 0) {
                         this.roundCountDownText.setVisible(false);
-                        this.p2CountText = 3;
+                        this.countText = 3;
                         this.reset('player2');
                     }
                 },
@@ -323,6 +353,7 @@ class GameScene extends Phaser.Scene {
                 this.scene.launch('EndScene', {
                     hasPlayer2: this.hasPlayer2,
                     initialTime: this.initialTime,
+                    scoreLimit: this.scoreLimit,
                     score1: this.score1,
                     score2: this.score2,
                 });
@@ -333,6 +364,7 @@ class GameScene extends Phaser.Scene {
                 this.scene.launch('EndScene', {
                     hasPlayer2: this.hasPlayer2,
                     initialTime: this.initialTime,
+                    scoreLimit: this.scoreLimit,
                     score1: this.score1,
                     score2: this.score2,
                 });
@@ -353,8 +385,6 @@ class GameScene extends Phaser.Scene {
     }
 
     reset(scorer) {
-        // TODO: stop computer player ? 
-
         this.time.addEvent({
             delay: 1000,
             callback: () => {

@@ -4,6 +4,7 @@ import GameChooseScene from './scenes/GameChooseScene';
 import GameScene from './scenes/GameScene';
 import PauseScene from './scenes/PauseScene';
 import EndScene from './scenes/EndScene';
+import CreditsScene from './scenes/CreditsScene';
 import SliderPlugin from 'phaser3-rex-plugins/plugins/slider-plugin.js';
 
 const WebFont = require('webfontloader');
@@ -33,6 +34,7 @@ const config = {
         GameScene,
         PauseScene,
         EndScene,
+        CreditsScene,
     ],
 };
 
@@ -40,7 +42,7 @@ window.addEventListener('load', () => {
     WebFont.load({
         google: {
             families: [
-                'Raleway',
+                'Roboto',
             ],
         },
         fontactive: () => {
